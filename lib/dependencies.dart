@@ -12,6 +12,8 @@ Future<void> initialiseDependencies() async {
 
   if (kDebugMode) {
     logger.level = Level.ALL;
+  } else {
+    logger.level = Level.INFO;
   }
 
   FlutterError.onError = (details) {
@@ -24,7 +26,7 @@ Future<void> initialiseDependencies() async {
 
   logger.config('Initializing dependencies');
   GetIt.instance.registerSingleton<NetworkService>(
-    NetworkService(),
+    NetworkService()..initialise(),
     dispose: (param) => param.dispose(),
   );
 }
