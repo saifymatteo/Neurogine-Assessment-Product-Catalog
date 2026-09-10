@@ -54,6 +54,12 @@ lib
 - [ ] States indicator for each pages
 - [ ] Explains the code organization
 
+## Extra
+
+I use extra tools for this project:
+
+- [quicktype](https://app.quicktype.io/?l=dart) - bootstrap the API models
+
 ## AI Usage
 
 For debugging on why `build_runner` is stuck on `Running FreezedGenerator` indefinitely. Caused by zombie `dart.exe` processes holding the build_runner lock
