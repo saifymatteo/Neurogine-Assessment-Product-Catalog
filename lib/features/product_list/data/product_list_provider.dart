@@ -2,12 +2,12 @@ import 'package:get_it/get_it.dart';
 import '../../../cores/network/service.dart';
 
 class ProductListDataProvider {
-  final GetIt getIt = GetIt.instance;
+  final GetIt _getIt = GetIt.instance;
 
   Future<Object?> readData({required int limit, required int skip}) async {
-    final dio = getIt<NetworkService>().dio;
-
     try {
+      final dio = _getIt<NetworkService>().dio;
+
       final response = await dio.get<dynamic>(
         '/products',
         queryParameters: {'limit': limit, 'skip': skip},
@@ -24,9 +24,9 @@ class ProductListDataProvider {
     required int limit,
     required int skip,
   }) async {
-    final dio = getIt<NetworkService>().dio;
-
     try {
+      final dio = _getIt<NetworkService>().dio;
+
       final response = await dio.get<dynamic>(
         '/products/search',
         queryParameters: {'q': query, 'limit': limit, 'skip': skip},
