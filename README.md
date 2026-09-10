@@ -47,8 +47,8 @@ lib
 
 ## TODO
 
-- [ ] Product List page
-  - [ ] Search feature
+- [x] Product List page
+  - [x] Search feature
   - [ ] Pagination
 - [ ] Product Detail page
 - [ ] States indicator for each pages
