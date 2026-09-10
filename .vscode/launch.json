@@ -9,21 +9,21 @@
       "request": "launch",
       "type": "dart",
       "flutterMode": "debug",
-      "args": ["--verbose", "--web-port=8080"]
+      "args": ["--verbose", "--web-port=8081"]
     },
     {
       "name": "Profile",
       "request": "launch",
       "type": "dart",
       "flutterMode": "profile",
-      "args": ["--verbose", "--web-port=8080"]
+      "args": ["--verbose", "--web-port=8081"]
     },
     {
       "name": "Release",
       "request": "launch",
       "type": "dart",
       "flutterMode": "release",
-      "args": ["--verbose", "--web-port=8080"]
+      "args": ["--verbose", "--web-port=8081"]
     }
   ]
 }
