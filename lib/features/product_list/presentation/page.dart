@@ -1,10 +1,9 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import 'package:skeletonizer/skeletonizer.dart';
 import 'package:very_good_infinite_list/very_good_infinite_list.dart';
 
+import '../../../cores/ui/image.dart';
 import '../../../models/models.dart';
 import '../../product_detail/presentation/page.dart';
 import 'bloc.dart';
@@ -205,20 +204,7 @@ class _ProductTile extends StatelessWidget {
           child: Row(
             spacing: 12,
             children: [
-              CachedNetworkImage(
-                imageUrl: v.thumbnail ?? '',
-                width: 120,
-                height: 120,
-                fit: BoxFit.contain,
-                placeholder: (context, url) {
-                  return const Skeletonizer(
-                    child: SizedBox(width: 120, height: 120),
-                  );
-                },
-                errorWidget: (context, url, error) {
-                  return const Icon(Icons.broken_image);
-                },
-              ),
+              ProductImage.thumbnail(url: v.thumbnail ?? ''),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
