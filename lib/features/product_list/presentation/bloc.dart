@@ -105,7 +105,14 @@ class ProductListBloc extends Bloc<ProductListEvent, ProductListState> {
           exception: 'Unable to fetch more, current data is missing',
         ),
       );
-      return;
+      // Revert back to other events
+      if (event.query?.isNotEmpty ?? false) {
+        return _onEventSearch(
+          ProductListEventSearch(query: event.query!),
+          emit,
+        );
+      }
+      return _onEventInitialise(ProductListEventInitialise(), emit);
     }
 
     final skip = currentData.skip ?? 0;

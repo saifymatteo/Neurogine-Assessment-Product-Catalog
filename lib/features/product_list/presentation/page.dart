@@ -136,15 +136,31 @@ class _ProductListTile extends StatelessWidget {
         return _ProductTile(value: item);
       },
       separatorBuilder: (context, index) => const SizedBox(height: 20),
-      loadingBuilder: (context) => const Align(
-        alignment: Alignment.topCenter,
-        child: Padding(
-          padding: EdgeInsets.only(top: 48),
-          child: CircularProgressIndicator(),
+      loadingBuilder: (context) =>
+          const _ListFooter(child: CircularProgressIndicator()),
+      errorBuilder: (context) => _ListFooter(
+        child: Column(
+          children: [
+            Text(exception.toString()),
+            if (!hasReachedMax)
+              TextButton(
+                // Re-use load more because query may available
+                onPressed: onFetchData,
+                child: const Text('Retry'),
+              ),
+          ],
         ),
       ),
-      errorBuilder: (context) => _StatusText(text: exception.toString()),
-      emptyBuilder: (context) => const _StatusText(text: 'No items found'),
+      emptyBuilder: (context) => Column(
+        children: [
+          const _ListFooter(child: Text('No items found')),
+          TextButton(
+            // Re-use load more because query may available
+            onPressed: onFetchData,
+            child: const Text('Retry'),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -220,19 +236,16 @@ class _ProductTile extends StatelessWidget {
   }
 }
 
-class _StatusText extends StatelessWidget {
-  const _StatusText({required this.text});
+class _ListFooter extends StatelessWidget {
+  const _ListFooter({required this.child});
 
-  final String text;
+  final Widget child;
 
   @override
   Widget build(BuildContext context) {
     return Align(
       alignment: Alignment.topCenter,
-      child: Padding(
-        padding: const EdgeInsets.only(top: 20),
-        child: Text(text),
-      ),
+      child: Padding(padding: const EdgeInsets.only(top: 40), child: child),
     );
   }
 }
