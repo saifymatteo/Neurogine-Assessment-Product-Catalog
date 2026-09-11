@@ -69,6 +69,7 @@ class _ContentState extends State<_Content> {
                       ProductListEventSearch(query: value),
                     ),
                     decoration: const InputDecoration(
+                      labelText: 'Search',
                       hintText: 'eg. "phone"',
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(8)),
