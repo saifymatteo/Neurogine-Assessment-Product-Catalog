@@ -1,0 +1,21 @@
+services:
+  web:
+    build: .
+    working_dir: /app
+    # Allow user to press 'r' (hot reload) and 'R' (hot restart)
+    stdin_open: true
+    tty: true
+    volumes:
+      # Mount the source code, allow hot reload
+      - .:/app
+      # Persistent volumes for Dart and Pub Cache artifacts
+      - dart-tool:/app/.dart_tool
+      - pub-cache:/root/.pub-cache
+    ports:
+      - "8081:8081" # Bind to host port 8081
+    command: >
+      sh -c "flutter pub get && flutter run -d web-server --web-hostname 0.0.0.0 --web-port 8081"
+
+volumes:
+  dart-tool:
+  pub-cache:

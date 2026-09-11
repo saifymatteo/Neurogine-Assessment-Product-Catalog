@@ -19,13 +19,18 @@ flutter pub get
 flutter run # Choose your platform
 ```
 
-via VS Code: Simply use the 'Run and Debug' in the VS Code
+via VS Code: Simply use the 'Run and Debug' in the VS Code and choose `Dev` profile
 
 via Docker:
 
 ```bash
 docker compose up -d
+docker compose attach web # Allow hot reload / restart from your terminal
+
+docker compose down # To stop and remove the container
 ```
+
+Wait for few minutes for the Docker to compiles the app and serve the `main.dart.js`. Once done, open `http://localhost:8081/` in your browser.
 
 ## Architecture
 
