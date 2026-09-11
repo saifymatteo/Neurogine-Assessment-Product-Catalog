@@ -64,7 +64,7 @@ For `Widget` that started with underscore `_` like `_Content` are meant to be si
 - [x] States indicator for each pages
 - [x] Error handling for each pages
 - [x] Explains the code organization
-- [ ] Unit tests
+- [x] Unit tests
 
 ## Extra
 
@@ -83,4 +83,5 @@ Additional package dependencies for convenience:
 
 ## AI Usage
 
-For debugging on why `build_runner` is stuck on `Running FreezedGenerator` indefinitely. Caused by zombie `dart.exe` processes holding the build_runner lock
+- Debugging on why `build_runner` is stuck on `Running FreezedGenerator` indefinitely. Caused by zombie `dart.exe` processes holding the build_runner lock
+- How to do unit tests with Bloc + Dio as network service. By default, Dio throw exception because of bad response 400.
