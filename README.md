@@ -33,12 +33,22 @@ docker compose up -d
 
 ```pattern
 lib
- |-- cores                  # All core (utils, network, common)
- |-- features               # All features (data, domain, presentation layer)
- |-- models                 # Data models
- |-- dependencies.dart      # All dependencies initialization
- |-- main.dart              # Flutter entrypoint
+ |-- cores                       # All core (utils, network, common)
+      |-- network                # Network/API client
+      |-- ui                     # Shared UI widgets
+ |-- features                    # All features (data, domain, presentation layer)
+      |-- feature 1
+           |-- data              # Data layer
+           |-- domain            # Domain layer
+           |-- presentation      # Presentation layer
+ |-- models                      # Data models
+ |-- dependencies.dart           # All dependencies initialization
+ |-- main.dart                   # Flutter entrypoint
 ```
+
+For **debounce**, I simply using [stream_transform](https://pub.dev/packages/stream_transform) as suggested by Bloc. Implementing it in client-side is the simplest approach with minimal issue rather than on the data layer side.
+
+For `Widget` that started with underscore `_` like `_Content` are meant to be single file used.
 
 ### FAQ
 
@@ -50,15 +60,26 @@ lib
 - [x] Product List page
   - [x] Search feature
   - [x] Pagination
-- [ ] Product Detail page
-- [ ] States indicator for each pages
-- [ ] Explains the code organization
+- [x] Product Detail page
+- [x] States indicator for each pages
+- [x] Error handling for each pages
+- [x] Explains the code organization
+- [ ] Unit tests
 
 ## Extra
 
 I use extra tools for this project:
 
 - [quicktype](https://app.quicktype.io/?l=dart) - bootstrap the API models
+
+Additional package dependencies for convenience:
+
+- [skeletonizer](https://pub.dev/packages/skeletonizer) - shimmer for thumbnails
+- [cached_network_image](https://pub.dev/packages/cached_network_image) - displaying images with internal caching mechanism
+- [intl](https://pub.dev/packages/intl) - handling currency display
+- [very_good_analysis](https://pub.dev/packages/very_good_analysis) - sane default and opinionated linting
+- [very_good_infinite_list](https://pub.dev/packages/very_good_infinite_list) - convenience infinite scrolling for load more function
+- [flutter_rating_bar](https://pub.dev/packages/flutter_rating_bar) - convenience rating bar product detail
 
 ## AI Usage
 
