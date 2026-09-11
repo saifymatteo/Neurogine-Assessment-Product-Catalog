@@ -24,10 +24,12 @@ dependencies:
   very_good_infinite_list: ^0.9.0
 
 dev_dependencies:
+  bloc_test: ^10.0.0
   build_runner: ^2.15.1
   flutter_test:
     sdk: flutter
   freezed: ^3.2.5
+  http_mock_adapter: ^0.6.1
   json_serializable: ^6.14.1
   very_good_analysis: ^10.3.0
 
