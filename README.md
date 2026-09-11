@@ -66,6 +66,12 @@ For `Widget` that started with underscore `_` like `_Content` are meant to be si
 - [x] Explains the code organization
 - [x] Unit tests
 
+## Future Improvements
+
+- Better UI design
+- More unit tests
+- Localization with ARB
+
 ## Extra
 
 I use extra tools for this project:
