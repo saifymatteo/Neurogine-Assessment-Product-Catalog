@@ -49,7 +49,7 @@ lib
 
 - [x] Product List page
   - [x] Search feature
-  - [ ] Pagination
+  - [x] Pagination
 - [ ] Product Detail page
 - [ ] States indicator for each pages
 - [ ] Explains the code organization

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:skeletonizer/skeletonizer.dart';
+import 'package:very_good_infinite_list/very_good_infinite_list.dart';
 
 import '../../../models/models.dart';
 import '../../product_detail/presentation/page.dart';
@@ -78,31 +79,12 @@ class _ContentState extends State<_Content> {
                 ),
               ),
               Expanded(
-                child: switch (state) {
-                  ProductListStateInitial() => const SizedBox(),
-                  ProductListStateInProgress(:final products) =>
-                    switch (products) {
-                      ProductList(:final products) => _ProductListTile(
-                        items: products,
-                      ),
-                      null => const Align(
-                        alignment: Alignment.topCenter,
-                        child: Padding(
-                          padding: EdgeInsets.only(top: 48),
-                          child: CircularProgressIndicator(),
-                        ),
-                      ),
-                    },
-                  ProductListStateSuccess(:final products) =>
-                    (products.products?.isEmpty ?? false)
-                        ? const _StatusText(text: 'Items not found')
-                        : _ProductListTile(items: products.products),
-                  ProductListStateSuccessMax(:final products) =>
-                    _ProductListTile(items: products.products),
-                  ProductListStateFailure(:final exception) => _StatusText(
-                    text: exception.toString(),
+                child: _ProductListTile(
+                  state: state,
+                  onFetchData: () => context.read<ProductListBloc>().add(
+                    ProductListEventLoadMore(query: _searchController.text),
                   ),
-                },
+                ),
               ),
             ],
           ),
@@ -113,26 +95,56 @@ class _ContentState extends State<_Content> {
 }
 
 class _ProductListTile extends StatelessWidget {
-  const _ProductListTile({this.items});
+  const _ProductListTile({required this.state, required this.onFetchData});
 
-  final List<Product>? items;
+  final ProductListState state;
+  final VoidCallback onFetchData;
 
   @override
   Widget build(BuildContext context) {
-    final v = items;
-    if (v == null || v.isEmpty) {
+    if (state is ProductListStateInitial) {
       return const SizedBox();
     }
 
-    return ListView.separated(
-      padding: const EdgeInsets.only(left: 30, top: 20, right: 30, bottom: 72),
-      itemCount: v.length,
-      itemBuilder: (context, index) {
-        final item = v[index];
+    // Decompose the state properties.
+    // Intentionally define all possible state for future additional switch case
+    final (products, exception, hasReachedMax) = (switch (state) {
+      ProductListStateInitial() => (null, null, false),
+      ProductListStateInProgress(:final products) => (products, null, false),
+      ProductListStateSuccess(
+        :final products,
+        :final message,
+        :final hasReachedMax,
+      ) =>
+        (products, message, hasReachedMax),
+      ProductListStateFailure(:final products, :final exception) => (
+        products,
+        exception,
+        false,
+      ),
+    });
 
+    return InfiniteList(
+      isLoading: state is ProductListStateInProgress,
+      onFetchData: onFetchData,
+      hasReachedMax: hasReachedMax,
+      hasError: exception != null,
+      padding: const EdgeInsets.only(left: 30, top: 20, right: 30, bottom: 72),
+      itemCount: products?.products?.length ?? 0,
+      itemBuilder: (context, index) {
+        final item = products?.products?[index];
         return _ProductTile(value: item);
       },
       separatorBuilder: (context, index) => const SizedBox(height: 20),
+      loadingBuilder: (context) => const Align(
+        alignment: Alignment.topCenter,
+        child: Padding(
+          padding: EdgeInsets.only(top: 48),
+          child: CircularProgressIndicator(),
+        ),
+      ),
+      errorBuilder: (context) => _StatusText(text: exception.toString()),
+      emptyBuilder: (context) => const _StatusText(text: 'No items found'),
     );
   }
 }

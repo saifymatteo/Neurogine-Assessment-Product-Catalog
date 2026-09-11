@@ -28,7 +28,7 @@ class ProductListBloc extends Bloc<ProductListEvent, ProductListState> {
   ProductListBloc() : super(const ProductListStateInitial()) {
     on<ProductListEventInitialise>(_onEventInitialise);
     on<ProductListEventSearch>(_onEventSearch, transformer: _debounce());
-    on<ProductListEventLoadMore>(_onEventLoadMore);
+    on<ProductListEventLoadMore>(_onEventLoadMore, transformer: _debounce());
   }
 
   final _logger = Logger('ProductListBloc');
@@ -51,7 +51,7 @@ class ProductListBloc extends Bloc<ProductListEvent, ProductListState> {
       final data = await _repository.fetchProductList();
 
       if (data == null) {
-        emit(const ProductListStateFailure(exception: 'Data is missing'));
+        emit(const ProductListStateFailure(exception: 'Unable to fetch data'));
         return;
       }
 
@@ -69,6 +69,7 @@ class ProductListBloc extends Bloc<ProductListEvent, ProductListState> {
     try {
       emit(const ProductListStateInProgress());
 
+      // Guard against valid query
       if (event.query.isEmpty) {
         return _onEventInitialise(ProductListEventInitialise(), emit);
       }
@@ -76,7 +77,7 @@ class ProductListBloc extends Bloc<ProductListEvent, ProductListState> {
       final data = await _repository.searchProductList(query: event.query);
 
       if (data == null) {
-        emit(const ProductListStateFailure(exception: 'Data is missing'));
+        emit(const ProductListStateFailure(exception: 'Unable to search'));
         return;
       }
 
@@ -91,50 +92,70 @@ class ProductListBloc extends Bloc<ProductListEvent, ProductListState> {
     ProductListEventLoadMore event,
     Emitter<ProductListState> emit,
   ) async {
+    final currentData = switch (state) {
+      ProductListStateInitial() => null,
+      ProductListStateInProgress(:final products) => products,
+      ProductListStateSuccess(:final products) => products,
+      ProductListStateFailure(:final products) => products,
+    };
+
+    if (currentData == null) {
+      emit(
+        const ProductListStateFailure(
+          exception: 'Unable to fetch more, current data is missing',
+        ),
+      );
+      return;
+    }
+
+    final skip = currentData.skip ?? 0;
+    final total = currentData.total ?? 0;
+    final limit = currentData.limit ?? 0;
+
+    if (skip >= total) {
+      emit(
+        ProductListStateSuccess(
+          products: currentData,
+          hasReachedMax: true,
+          message: 'You have reached the end',
+        ),
+      );
+      return;
+    }
+
     try {
-      final currentState = state;
-      final currentData = currentState is ProductListStateSuccess
-          ? currentState.products
-          : null;
+      emit(ProductListStateInProgress(products: currentData));
 
-      if (currentData == null) {
-        emit(const ProductListStateFailure(exception: 'Data is missing'));
-        return;
-      }
+      final hasQuery = event.query?.isNotEmpty ?? false;
 
-      final skip = currentData.skip ?? 0;
-      final total = currentData.total ?? 0;
-      final limit = currentData.limit ?? 0;
+      final data = switch (hasQuery) {
+        true => await _repository.searchProductList(
+          query: event.query!,
+          skip: skip + limit,
+        ),
+        false => await _repository.fetchProductList(skip: skip + limit),
+      };
 
-      if (skip >= total) {
+      if (data == null) {
         emit(
-          ProductListStateSuccessMax(
-            message: 'You have reached the end',
+          ProductListStateFailure(
             products: currentData,
+            exception: 'Unable to fetch more data',
           ),
         );
         return;
       }
 
-      emit(ProductListStateInProgress(products: currentData));
-
-      final data = switch (event.query) {
-        String() => await _repository.searchProductList(
-          query: event.query!,
-          skip: skip + limit,
+      emit(
+        ProductListStateSuccess(
+          products: data.copyWith(
+            products: [...?currentData.products, ...?data.products],
+          ),
         ),
-        null => await _repository.fetchProductList(skip: skip + limit),
-      };
-
-      if (data == null) {
-        emit(const ProductListStateFailure(exception: 'Data is missing'));
-        return;
-      }
-
-      emit(ProductListStateSuccess(products: data));
+      );
     } on Exception catch (e) {
       _logger.severe(e);
-      emit(ProductListStateFailure(exception: e));
+      emit(ProductListStateFailure(products: currentData, exception: e));
     }
   }
 }

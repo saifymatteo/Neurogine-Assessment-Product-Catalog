@@ -15,20 +15,20 @@ final class ProductListStateInProgress extends ProductListState {
 }
 
 final class ProductListStateSuccess extends ProductListState {
-  const ProductListStateSuccess({required this.products});
-  final ProductList products;
-}
-
-final class ProductListStateSuccessMax extends ProductListState {
-  const ProductListStateSuccessMax({
-    required this.message,
+  const ProductListStateSuccess({
     required this.products,
+    this.hasReachedMax = false,
+    this.message,
   });
+
   final ProductList products;
-  final String message;
+  final bool hasReachedMax;
+  final String? message;
 }
 
 final class ProductListStateFailure extends ProductListState {
-  const ProductListStateFailure({required this.exception});
+  const ProductListStateFailure({required this.exception, this.products});
+
+  final ProductList? products;
   final Object exception;
 }
