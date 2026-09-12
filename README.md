@@ -2,6 +2,11 @@
 
 A simple Product Catalog app made for the Neurogine Assessment.
 
+## Video Walkthrough
+
+- [6 minutes version](https://youtu.be/ed70eXEJ8YI) - Short walkthrough, skipped some parts
+- [27 minutes version](https://youtu.be/ZQP4ZkRknx8) - Detailed walkthrough, including each page, business logics and code execution
+
 ## Getting Started
 
 ### Pre-requisites
